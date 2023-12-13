@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's write</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+    <style>
+        .dual-wrapper {
+            display: flex;
+            height: 50vh;
+        }
+        .text-wrapper {
+            flex-grow: 1;
+            padding: 10px;
+        }
+
+        .text-wrapper textarea {
+            height: 100%;
+            width: 100%;
+        }
+
+        .action-wrapper {
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .action-wrapper button {
+            padding: 20px;
+            font-size: larger;
+        }
+
+        .error-box {
+            background-color: #fd9999;
+            border: 1px solid #df2c2c;
+            margin: 10px;
+            padding: 15px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <script type="importmap">
+        {
+          "imports": {
+            "react": "https://cdn.skypack.dev/pin/react@v17.0.1-yH0aYV1FOvoIPeKBbHxg/mode=imports,min/optimized/react.js",
+            "react-dom": "https://cdn.skypack.dev/pin/react-dom@v17.0.1-oZ1BXZ5opQ1DbTh7nu9r/mode=imports,min/optimized/react-dom.js",
+            "crypto-js": "https://cdn.skypack.dev/pin/crypto-js@v4.2.0-zrlxegy3yFOPYCCYn41o/mode=imports,min/optimized/crypto-js.js",
+            "openai": "https://cdn.skypack.dev/pin/openai@v4.17.4-C68fZ1cJJU9lC3u9Tfwb/mode=imports,min/optimized/openai.js",
+            "lodash.debounce": "https://cdn.skypack.dev/pin/lodash.debounce@v4.0.8-aOLIwnE2RethWPrEzTeR/mode=imports,min/optimized/lodash.debounce.js"
+          }
+        }
+      </script>
+    <div id="root"></div>
+    <script type="module">
+        import React from 'react';
+        import ReactDOM from 'react-dom';
+        import { App } from './app.js';
+
+        ReactDOM.render(React.createElement(App), document.getElementById('root'));
+    </script>
+</body>
+</html>
