@@ -1,5 +1,5 @@
-import { useCallback, useReducer, h, html } from 'preact';
-import { clearPassword, getSpeechUrl } from './ai.js';
+import { useCallback, useReducer, html } from 'preact';
+import { clearPassword, getSpeechData } from './ai.js';
 
 const ACTION_ON_CHANGE = 'ON_CHANGE';
 const ACTION_ON_CONVERT = 'ON_CONVERT';
@@ -68,7 +68,9 @@ export const App = () => {
 
             try {
                 dispatch({ type: ACTION_ON_LOAD });
-                const url = await getSpeechUrl(state.inputText);
+                const mediaSource = new MediaSource();
+                const url = URL.createObjectURL(mediaSource);
+                getSpeechData(state.inputText, mediaSource);
                 dispatch(({
                     type: ACTION_ON_CONVERT,
                     payload: {

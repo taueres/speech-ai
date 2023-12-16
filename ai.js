@@ -46,7 +46,7 @@ const createClient = () => {
     return openai;
 }
 
-export const getSpeechUrl = async (text) => {
+export const getSpeechData = async (text, mediaSource) => {
     const openai = createClient();
     const response = await openai.audio.speech.create(
         {
@@ -55,9 +55,21 @@ export const getSpeechUrl = async (text) => {
             input: text,
         },
     );
-    const buffer = await response.arrayBuffer();
-    const blob = new Blob([buffer], { type: 'audio/mp3' });
-    return window.URL.createObjectURL(blob);
+
+    const reader = response.body.getReader();
+    const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        sourceBuffer.appendBuffer(value);
+        await new Promise(resolve => {
+            sourceBuffer.addEventListener('updateend', resolve, { once: true });
+        });
+    }
+
+    mediaSource.endOfStream();
 }
 
 export const clearPassword = () => {
