@@ -1,7 +1,5 @@
-import React, { useCallback, useReducer } from 'react';
+import { useCallback, useReducer, h, html } from 'preact';
 import { clearPassword, getSpeechUrl } from './ai.js';
-
-const x = React.createElement.bind(React);
 
 const ACTION_ON_CHANGE = 'ON_CHANGE';
 const ACTION_ON_CONVERT = 'ON_CONVERT';
@@ -92,41 +90,19 @@ export const App = () => {
     );
 
     if (state.error) {
-        return x(
-            "div",
-            { className: 'error-box' },
-            'Error: ',
-            state.error
-        );
+        return html`<div className="error-box">Error: ${state.error}</div>`;
     }
 
-    return x(
-        'div',
-        null,
-        x(
-            'div',
-            { className: 'dual-wrapper' },
-            x(
-                'div',
-                { className: 'text-wrapper' },
-                x(
-                    'textarea',
-                    { value: state.inputText, onInput: onInputChange }
-                ),
-            ),
-        ),
-        x(
-            'div',
-            { className: 'action-wrapper' },
-            x(
-                'button',
-                { onClick: loadSpeech, disabled: state.loading },
-                'Read'
-            )
-        ),
-        state.audioUrl !== null ? x(
-            'audio',
-            { controls: true, src: state.audioUrl }
-        ) : null,
-    );
+    return html`
+        <div>
+            <div className="dual-wrapper">
+                <div className="text-wrapper">
+                    <textarea value=${state.inputText} onInput=${onInputChange}></textarea>
+                </div>
+            </div>
+            <div className="action-wrapper">
+                <button onClick=${loadSpeech} disabled=${state.loading}>Read</button>
+            </div>
+            ${state.audioUrl !== null ? html`<audio controls src=${state.audioUrl}></audio>` : null}
+        </div>`;
 };

@@ -45,21 +45,18 @@
     <script type="importmap">
         {
           "imports": {
-            "react": "https://cdn.skypack.dev/pin/react@v17.0.1-yH0aYV1FOvoIPeKBbHxg/mode=imports,min/optimized/react.js",
-            "react-dom": "https://cdn.skypack.dev/pin/react-dom@v17.0.1-oZ1BXZ5opQ1DbTh7nu9r/mode=imports,min/optimized/react-dom.js",
             "crypto-js": "https://cdn.skypack.dev/pin/crypto-js@v4.2.0-zrlxegy3yFOPYCCYn41o/mode=imports,min/optimized/crypto-js.js",
             "openai": "https://cdn.skypack.dev/pin/openai@v4.17.4-C68fZ1cJJU9lC3u9Tfwb/mode=imports,min/optimized/openai.js",
-            "lodash.debounce": "https://cdn.skypack.dev/pin/lodash.debounce@v4.0.8-aOLIwnE2RethWPrEzTeR/mode=imports,min/optimized/lodash.debounce.js"
+            "preact": "https://cdn.skypack.dev/pin/htm@v3.1.1-pWM29AHF3JmwKPnFwyeP/mode=imports,min/optimized/htm/preact/standalone.js"
           }
         }
       </script>
     <div id="root"></div>
     <script type="module">
-        import React from 'react';
-        import ReactDOM from 'react-dom';
+        import { html, render } from 'preact'
         import { App } from './app.js';
 
-        ReactDOM.render(React.createElement(App), document.getElementById('root'));
+        render(html`<${App} />`, document.getElementById('root'));
     </script>
 </body>
 </html>
