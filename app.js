@@ -102,6 +102,7 @@ export const App = () => {
                     <textarea value=${state.inputText} onInput=${onInputChange}></textarea>
                 </div>
             </div>
+            <p>Characters: ${state.inputText.length} / 4096</p>
             <div className="action-wrapper">
                 <button onClick=${loadSpeech} disabled=${state.loading}>Read</button>
             </div>
