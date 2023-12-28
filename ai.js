@@ -53,12 +53,11 @@ export const getSpeechData = async (text, mediaSource) => {
             model: "tts-1",
             voice: "alloy",
             input: text,
-            response_format: "opus",
         },
     );
 
     const reader = response.body.getReader();
-    const sourceBuffer = mediaSource.addSourceBuffer('audio/opus');
+    const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
 
     while (true) {
         const { done, value } = await reader.read();
