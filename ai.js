@@ -70,7 +70,21 @@ export const getSpeechData = async (text, mediaSource) => {
     }
 
     mediaSource.endOfStream();
-}
+};
+
+export const getSpeechUrl = async (text) => {
+    const openai = createClient();
+    const response = await openai.audio.speech.create(
+        {
+            model: "tts-1",
+            voice: "alloy",
+            input: text,
+        },
+    );
+    const buffer = await response.arrayBuffer();
+    const blob = new Blob([buffer], { type: 'audio/mp3' });
+    return window.URL.createObjectURL(blob);
+};
 
 export const clearPassword = () => {
     window.localStorage.removeItem(STORAGE_KEY);
