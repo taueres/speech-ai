@@ -4,6 +4,35 @@ import CryptoJS from 'crypto-js';
 const ENCRYPTED = 'U2FsdGVkX19sRMe2jrYUptbmN6BB9w3UK0uR9pQ9igO6MDugmpjfgNpi56QKaPEe2P4dJqEUjEF/J1aWuoWp13cVlVytXNzDi3R+aMJ8mTU=';
 const STORAGE_KEY = 'stored_pw';
 
+const BLOCK_SIZE = 4050;
+
+const splitText = (text) => {
+    const chunks = [];
+    let remainingText = text;
+
+    while (remainingText.length > 0) {
+        const block = remainingText.slice(0, BLOCK_SIZE);
+
+        let lastFullStop;
+        if (block.length < BLOCK_SIZE) {
+            lastFullStop = block.length - 1;
+        } else {
+            lastFullStop = block.lastIndexOf('.');
+            if (lastFullStop === -1) {
+                lastFullStop = block.lastIndexOf(' ');
+            }
+            if (lastFullStop === -1) {
+                lastFullStop = block.length - 1;
+            }
+        }
+        
+        chunks.push(block.slice(0, lastFullStop + 1));
+        remainingText = remainingText.slice(lastFullStop + 1);
+    }
+
+    return chunks;
+};
+
 const readPassword = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const reset = urlParams.get('reset');
@@ -46,7 +75,19 @@ const createClient = () => {
     return openai;
 }
 
-export const getSpeechData = async (text, mediaSource) => {
+export const getSpeechData = async (text) => {
+    const chunks = splitText(text);
+    const urls = [];
+    for (const chunk of chunks) {
+        const mediaSource = new MediaSource();
+        const url = URL.createObjectURL(mediaSource);
+        getSpeechDataForSingleText(chunk, mediaSource);
+        urls.push(url);
+    }
+    return urls;
+};
+
+const getSpeechDataForSingleText = async (text, mediaSource) => {
     const openai = createClient();
     const response = await openai.audio.speech.create(
         {
@@ -72,18 +113,23 @@ export const getSpeechData = async (text, mediaSource) => {
     mediaSource.endOfStream();
 };
 
-export const getSpeechUrl = async (text) => {
-    const openai = createClient();
-    const response = await openai.audio.speech.create(
-        {
-            model: "tts-1",
-            voice: "alloy",
-            input: text,
-        },
-    );
-    const buffer = await response.arrayBuffer();
-    const blob = new Blob([buffer], { type: 'audio/mp3' });
-    return window.URL.createObjectURL(blob);
+export const getSpeechUrls = async (text) => {
+    const chunks = splitText(text);
+    const urls = [];
+    for (const chunk of chunks) {
+        const openai = createClient();
+        const response = await openai.audio.speech.create(
+            {
+                model: "tts-1",
+                voice: "alloy",
+                input: chunk,
+            },
+        );
+        const buffer = await response.arrayBuffer();
+        const blob = new Blob([buffer], { type: 'audio/mp3' });
+        urls.push(window.URL.createObjectURL(blob));
+    }
+    return urls;
 };
 
 export const clearPassword = () => {

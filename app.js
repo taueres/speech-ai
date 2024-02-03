@@ -1,5 +1,5 @@
 import { useCallback, useReducer, html } from 'preact';
-import { clearPassword, getSpeechData, getSpeechUrl } from './ai.js';
+import { clearPassword, getSpeechData, getSpeechUrls } from './ai.js';
 
 const ACTION_ON_CHANGE = 'ON_CHANGE';
 const ACTION_ON_CONVERT = 'ON_CONVERT';
@@ -8,7 +8,7 @@ const ACTION_ON_LOAD = 'ON_LOAD';
 
 const INITIAL_STATE = {
     inputText: '',
-    audioUrl: null,
+    audioUrls: [],
     download: null,
     error: null,
     loading: false,
@@ -25,7 +25,7 @@ const reducer = (state, action) => {
         case ACTION_ON_CONVERT: {
             return {
                 ...state,
-                audioUrl: action.payload.value,
+                audioUrls: action.payload.value,
                 download: action.payload.download,
                 loading: false,
             };
@@ -40,7 +40,7 @@ const reducer = (state, action) => {
         case ACTION_ON_LOAD: {
             return {
                 ...state,
-                audioUrl: null,
+                audioUrls: [],
                 download: null,
                 error: null,
                 loading: true,
@@ -71,13 +71,11 @@ export const App = () => {
 
             try {
                 dispatch({ type: ACTION_ON_LOAD });
-                const mediaSource = new MediaSource();
-                const url = URL.createObjectURL(mediaSource);
-                getSpeechData(state.inputText, mediaSource);
+                const urls = await getSpeechData(state.inputText);
                 dispatch(({
                     type: ACTION_ON_CONVERT,
                     payload: {
-                        value: url,
+                        value: urls,
                     },
                 }));
             } catch (error) {
@@ -102,12 +100,12 @@ export const App = () => {
 
             try {
                 dispatch({ type: ACTION_ON_LOAD });
-                const url = await getSpeechUrl(state.inputText);
+                const urls = await getSpeechUrls(state.inputText);
                 dispatch(({
                     type: ACTION_ON_CONVERT,
                     payload: {
                         download: true,
-                        value: url,
+                        value: urls,
                     },
                 }));
             } catch (error) {
@@ -140,7 +138,7 @@ export const App = () => {
                 <button onClick=${loadSpeech} disabled=${state.loading}>Read</button>
                 <button onClick=${downloadSpeech} disabled=${state.loading}>Download</button>
             </div>
-            ${state.audioUrl !== null && !state.download ? html`<audio controls src=${state.audioUrl}></audio>` : null}
-            ${state.audioUrl !== null && state.download ? html`<a href=${state.audioUrl} download="speech">Download</a>` : null}
+            ${state.download && html`${state.audioUrls.map(u => html`<a href=${u} download="speech">Download</a><br />`)}`}
+            ${!state.download && html`${state.audioUrls.map(u => html`<audio controls src=${u}></audio>`)}`}
         </div>`;
 };
