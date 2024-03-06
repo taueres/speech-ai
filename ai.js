@@ -75,25 +75,26 @@ const createClient = () => {
     return openai;
 }
 
-export const getSpeechData = async (text) => {
+export const getSpeechData = async (text, speed) => {
     const chunks = splitText(text);
     const urls = [];
     for (const chunk of chunks) {
         const mediaSource = new MediaSource();
         const url = URL.createObjectURL(mediaSource);
-        getSpeechDataForSingleText(chunk, mediaSource);
+        getSpeechDataForSingleText(chunk, speed, mediaSource);
         urls.push(url);
     }
     return urls;
 };
 
-const getSpeechDataForSingleText = async (text, mediaSource) => {
+const getSpeechDataForSingleText = async (text, speed, mediaSource) => {
     const openai = createClient();
     const response = await openai.audio.speech.create(
         {
             model: "tts-1",
             voice: "alloy",
             input: text,
+            speed: Number(speed),
         },
     );
 
@@ -113,7 +114,7 @@ const getSpeechDataForSingleText = async (text, mediaSource) => {
     mediaSource.endOfStream();
 };
 
-export const getSpeechUrls = async (text) => {
+export const getSpeechUrls = async (text, speed) => {
     const chunks = splitText(text);
     const urls = [];
     for (const chunk of chunks) {
@@ -123,6 +124,7 @@ export const getSpeechUrls = async (text) => {
                 model: "tts-1",
                 voice: "alloy",
                 input: chunk,
+                speed: Number(speed),
             },
         );
         const buffer = await response.arrayBuffer();

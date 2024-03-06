@@ -1,7 +1,10 @@
 import { useCallback, useReducer, html } from 'preact';
 import { clearPassword, getSpeechData, getSpeechUrls } from './ai.js';
 
-const ACTION_ON_CHANGE = 'ON_CHANGE';
+const SPEEDS = [0.75, 0.90, 1, 1.10, 1.25];
+
+const ACTION_ON_TEXT_CHANGE = 'ON_TEXT_CHANGE';
+const ACTION_ON_SPEED_CHANGE = 'ON_SPEED_CHANGE';
 const ACTION_ON_CONVERT = 'ON_CONVERT';
 const ACTION_ON_ERROR = 'ON_ERROR';
 const ACTION_ON_LOAD = 'ON_LOAD';
@@ -12,14 +15,21 @@ const INITIAL_STATE = {
     download: null,
     error: null,
     loading: false,
+    speed: '1',
 };
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case ACTION_ON_CHANGE: {
+        case ACTION_ON_TEXT_CHANGE: {
             return {
                 ...state,
                 inputText: action.payload.value,
+            };
+        }
+        case ACTION_ON_SPEED_CHANGE: {
+            return {
+                ...state,
+                speed: action.payload.value,
             };
         }
         case ACTION_ON_CONVERT: {
@@ -56,7 +66,16 @@ export const App = () => {
 
     const onInputChange = useCallback((event) => {
         dispatch({
-            type: ACTION_ON_CHANGE,
+            type: ACTION_ON_TEXT_CHANGE,
+            payload: {
+                value: event.target.value
+            }
+        });
+    }, []);
+
+    const onSpeedChange = useCallback((event) => {
+        dispatch({
+            type: ACTION_ON_SPEED_CHANGE,
             payload: {
                 value: event.target.value
             }
@@ -71,7 +90,7 @@ export const App = () => {
 
             try {
                 dispatch({ type: ACTION_ON_LOAD });
-                const urls = await getSpeechData(state.inputText);
+                const urls = await getSpeechData(state.inputText, state.speed);
                 dispatch(({
                     type: ACTION_ON_CONVERT,
                     payload: {
@@ -89,7 +108,7 @@ export const App = () => {
                 });
             }
         },
-        [state.inputText],
+        [state.inputText, state.speed],
     );
 
     const downloadSpeech = useCallback(
@@ -100,7 +119,7 @@ export const App = () => {
 
             try {
                 dispatch({ type: ACTION_ON_LOAD });
-                const urls = await getSpeechUrls(state.inputText);
+                const urls = await getSpeechUrls(state.inputText, state.speed);
                 dispatch(({
                     type: ACTION_ON_CONVERT,
                     payload: {
@@ -119,7 +138,7 @@ export const App = () => {
                 });
             }
         },
-        [state.inputText],
+        [state.inputText, state.speed],
     );
 
     if (state.error) {
@@ -134,6 +153,10 @@ export const App = () => {
                 </div>
             </div>
             <p>Characters: ${state.inputText.length} / 4096</p>
+            Speed:${' '}
+            <select onChange=${onSpeedChange} value=${state.speed}>
+                ${SPEEDS.map(x => html`<option value="${x}">${x}</option>`)}
+            </select>
             <div className="action-wrapper">
                 <button onClick=${loadSpeech} disabled=${state.loading}>Read</button>
                 <button onClick=${downloadSpeech} disabled=${state.loading}>Download</button>
