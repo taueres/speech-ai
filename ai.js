@@ -1,6 +1,9 @@
 import OpenAI from 'openai';
 import CryptoJS from 'crypto-js';
 
+// So that we can encrypt a new apiKey if we need
+window.sergioCryptoJS = CryptoJS;
+
 const ENCRYPTED = 'U2FsdGVkX19sRMe2jrYUptbmN6BB9w3UK0uR9pQ9igO6MDugmpjfgNpi56QKaPEe2P4dJqEUjEF/J1aWuoWp13cVlVytXNzDi3R+aMJ8mTU=';
 const STORAGE_KEY = 'stored_pw';
 
