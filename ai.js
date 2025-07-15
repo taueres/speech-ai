@@ -2,9 +2,10 @@ import OpenAI from 'openai';
 import CryptoJS from 'crypto-js';
 
 // So that we can encrypt a new apiKey if we need
+// sergioCryptoJS.AES.encrypt('apikey', 'mypass').toString();
 window.sergioCryptoJS = CryptoJS;
 
-const ENCRYPTED = 'U2FsdGVkX19sRMe2jrYUptbmN6BB9w3UK0uR9pQ9igO6MDugmpjfgNpi56QKaPEe2P4dJqEUjEF/J1aWuoWp13cVlVytXNzDi3R+aMJ8mTU=';
+const ENCRYPTED = 'U2FsdGVkX1+htiM/dYmI4NQo3u3ysKX9knVJrpFFkRMgkhPaAC2ySQCMGDtLGJBQQ8sF3HzJO7+2VrjV8oiB5l7wFwUx/a/ci0aHeza35zn1bxa/JUmYwXlb4+BuTXdzctV0o0f4NUGcMoha1ZNQ9Z8a0tvfq1rtfTNz4VG/70bZPYP8FJpCu0ODKXzQVz/HvshGY5CCnR/tNXYHXK8XC+iH6r9UhdG3bxTsRaAEe+Zk4vXkcoIphFSoSKf/p5QI';
 const STORAGE_KEY = 'stored_pw';
 
 const BLOCK_SIZE = 4050;
