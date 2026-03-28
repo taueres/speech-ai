@@ -95,7 +95,7 @@ const getSpeechDataForSingleText = async (text, speed, mediaSource) => {
     const openai = createClient();
     const response = await openai.audio.speech.create(
         {
-            model: "tts-1",
+            model: "gpt-4o-mini-tts",
             voice: "alloy",
             input: text,
             speed: Number(speed),
@@ -125,7 +125,7 @@ export const getSpeechUrls = async (text, speed) => {
         const openai = createClient();
         const response = await openai.audio.speech.create(
             {
-                model: "tts-1",
+                model: "gpt-4o-mini-tts",
                 voice: "alloy",
                 input: chunk,
                 speed: Number(speed),
